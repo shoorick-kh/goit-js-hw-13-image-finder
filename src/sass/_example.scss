@@ -4,3 +4,12 @@
   padding: 0;
   list-style: none;
 }
+
+.stats {
+  display: flex;
+  justify-content: space-around;
+}
+
+.img {
+  border-radius: 10px;
+}
