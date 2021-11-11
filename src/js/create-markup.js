@@ -8,23 +8,26 @@ refs.form.addEventListener('submit', fetchImagesOnSearch);
 refs.btnMore.addEventListener('click', onClickBtnMore);
 refs.input.addEventListener('focus', activateBtnSearch);
 
-// console.log(refs.input);
 let numberPage = null;
 let query = null;
+let numberCards = 0;
 
 refs.btnSearch.disabled = true;
 refs.btnMore.disabled = true;
 
 function fetchImagesOnSearch(evt) {
   evt.preventDefault();
-  numberPage = 1;
+
   refs.listCards.innerHTML = '';
+  numberPage = 1;
+
   const searchQuery = evt.currentTarget.elements.query.value
     .toLowerCase()
     .trim();
-  // console.log(evt.currentTarget.elements.query.value);
+
   if (!searchQuery) return;
   refs.btnMore.disabled = false;
+
   API.fetchImages(searchQuery, numberPage)
     .then(data => {
       if (data.hits.length === 0) return errorData();
@@ -32,9 +35,12 @@ function fetchImagesOnSearch(evt) {
       createMarkup(data);
     })
     .catch(errorFetch);
+
   query = searchQuery;
+
   refs.btnSearch.disabled = true;
   refs.form.reset();
+  numberCards = 0;
 }
 
 function createMarkup(arr) {
@@ -42,22 +48,34 @@ function createMarkup(arr) {
     'beforeend',
     arr.hits.map(cardTpl).join(''),
   );
+
   numberPage += 1;
-  console.log(numberPage);
+
+  if (numberCards >= 12) {
+    refs.listCards.children[numberCards].classList.add('my-element-selector');
+  }
+  if (numberCards > 12) {
+    refs.listCards.children[numberCards - 12].classList.remove(
+      'my-element-selector',
+    );
+  }
+  numberCards += 12;
+  // console.log(numberPage);
+  // console.log(refs.listCards.children);
 }
 
 function onClickBtnMore() {
-  console.log(query);
+  // console.log(query);
   API.fetchImages(query, numberPage)
     .then(data => {
       createMarkup(data);
+      const element = document.querySelector('.my-element-selector');
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
     })
     .catch(errorFetch);
-  // const element = document.querySelector('.my-element-selector');
-  // element.scrollIntoView({
-  //   behavior: 'smooth',
-  //   block: 'end',
-  // });
 }
 
 function errorFetch() {
