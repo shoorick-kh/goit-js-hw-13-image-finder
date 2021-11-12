@@ -14,6 +14,8 @@ let numberCards = 0;
 refs.btnMore.classList.add('is-hidden');
 
 function fetchImagesOnSearch(evt) {
+  refs.btnMore.classList.add('is-hidden');
+
   evt.preventDefault();
 
   refs.listCards.innerHTML = '';
@@ -24,7 +26,6 @@ function fetchImagesOnSearch(evt) {
     .trim();
 
   if (!searchQuery) return;
-
   refs.btnMore.classList.remove('is-hidden');
 
   API.fetchImages(searchQuery, numberPage)
