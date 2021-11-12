@@ -6,14 +6,12 @@ import cardTpl from '../templates/card.hbs';
 
 refs.form.addEventListener('submit', fetchImagesOnSearch);
 refs.btnMore.addEventListener('click', onClickBtnMore);
-refs.input.addEventListener('focus', activateBtnSearch);
 
 let numberPage = null;
 let query = null;
 let numberCards = 0;
 
-refs.btnSearch.disabled = true;
-refs.btnMore.disabled = true;
+refs.btnMore.classList.add('is-hidden');
 
 function fetchImagesOnSearch(evt) {
   evt.preventDefault();
@@ -26,7 +24,8 @@ function fetchImagesOnSearch(evt) {
     .trim();
 
   if (!searchQuery) return;
-  refs.btnMore.disabled = false;
+
+  refs.btnMore.classList.remove('is-hidden');
 
   API.fetchImages(searchQuery, numberPage)
     .then(data => {
@@ -38,12 +37,15 @@ function fetchImagesOnSearch(evt) {
 
   query = searchQuery;
 
-  refs.btnSearch.disabled = true;
   refs.form.reset();
   numberCards = 0;
 }
 
 function createMarkup(arr) {
+  if (arr.hits.length < 12) {
+    refs.btnMore.classList.add('is-hidden');
+  }
+
   refs.listCards.insertAdjacentHTML(
     'beforeend',
     arr.hits.map(cardTpl).join(''),
@@ -86,8 +88,8 @@ function errorData() {
   alert('Uncorrect name! Please, write an other word!');
 }
 
-function activateBtnSearch(evt) {
-  if (evt.isTrusted) {
-    refs.btnSearch.disabled = false;
-  }
-}
+// function activateBtnSearch(evt) {
+//   if (evt.isTrusted) {
+//     refs.btnSearch.disabled = false;
+//   }
+// }
